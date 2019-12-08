@@ -44,6 +44,9 @@ int main(int argc, char *argv[]){
     fout << "Процесс вызванный с помощью fork: " << argv[3] << "\n";
     fout << "Процесс вызванный с помощью vfork: " << argv[4] << "\n\n";
     fout.close();
+    
+    sleep(stoi(argv[2]));
+	print (argv[1],2);
   
     if (fork() == 0) {
 		sleep(stoi(argv[3]));	
@@ -55,12 +58,9 @@ int main(int argc, char *argv[]){
 		sleep(stoi(argv[4]));
 		print (argv[1],1);
 	
-        if (execl("process.cpp", " ", NULL) == -1)
+        if (execl("process", " ", NULL) == -1)
         	exit(1);
-	} else {
-		sleep(stoi(argv[2]));
-		print (argv[1],2);	
-	}
+	} 
 	
     return 0;
 }
