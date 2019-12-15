@@ -33,14 +33,14 @@ int main(){
 		getline (file,buffer);
 		thread_arg = &buffer;
 		if (i % 2 == 0){
-			pthread_create(&thread_1, NULL, thread1_Function, thread_arg);
-			pthread_join(thread_1, NULL);	
+			pthread_create(&thread_1, NULL, thread1_Function, thread_arg);	
 		} else {
 			pthread_create(&thread_2, NULL, thread2_Function, thread_arg);
-			pthread_join(thread_2, NULL); 
 		
 		}
 		
+		pthread_join(thread_1, NULL);
+		pthread_join(thread_2, NULL); 
 		i++;
 	}
 	

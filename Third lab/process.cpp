@@ -8,6 +8,7 @@ using namespace std;
 
 int main(int argc, char *argv[]){
 
+	
    cout << "Произошла замена программы" << endl;
    return 0;
 }

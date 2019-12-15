@@ -2,6 +2,7 @@
 #include <unistd.h>
 #include <fstream>
 #include <string>
+#include <time.h>
 
 using namespace std;
 
@@ -45,8 +46,6 @@ int main(int argc, char *argv[]){
     fout << "Процесс вызванный с помощью vfork: " << argv[4] << "\n\n";
     fout.close();
     
-    sleep(stoi(argv[2]));
-	print (argv[1],2);
   
     if (fork() == 0) {
 		sleep(stoi(argv[3]));	
@@ -57,10 +56,12 @@ int main(int argc, char *argv[]){
     if (vfork() == 0){
 		sleep(stoi(argv[4]));
 		print (argv[1],1);
-	
-        if (execl("process", " ", NULL) == -1)
-        	exit(1);
+        execl("process", "" , NULL);
+        exit(1);
 	} 
+
+	sleep(stoi(argv[2]));
+	print (argv[1],2);
 	
     return 0;
 }
