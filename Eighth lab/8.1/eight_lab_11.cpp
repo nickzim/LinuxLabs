@@ -25,7 +25,7 @@ int main(int argc, char *argv[]) {
 	pid_t process_id;
 	} mes;
 	
-	msg_queue_id = msgget(190, 0622 | IPC_CREAT);
+	msg_queue_id = msgget(280, 0622 | IPC_CREAT);
 	
 	if (msg_queue_id == -1){
 		cout << "Ошибка при создании очереди\n";
@@ -44,7 +44,6 @@ int main(int argc, char *argv[]) {
 				cout << mes.process_id << "\n";
 		}
 	}
-	pause();
 
 	return 0;
 }

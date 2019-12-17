@@ -23,21 +23,24 @@ int main(int argc, char *argv[]) {
 	mes.mtype = 1;
 	mes.process_id = getpid();
 
-	int msg_queue_id = msgget(190, IPC_CREAT);
-	
-	if (msg_queue_id == -1){
-		cout << "Ошибка при доступе к очереди\n";
-		cout << strerror(errno) << "\n";
-	}
-
 	signal(SIGALRM, pause);
 	alarm(atoi(argv[1]));
 	for(;;){
+		int msg_queue_id = msgget(280, IPC_EXCL);
+		
+		if (msg_queue_id == -1){
+			//cout << "Ошибка при доступе к очереди\n";
+			//cout << strerror(errno) << "\n";
+		}
+	
+
 		if (msgsnd(msg_queue_id,&mes,256,0) == -1){
 			//cout << "Ошибка при отправке сообщений\n";
 			//cout << strerror(errno) << "\n";
-		}
-	}
+		} else {
+			break;
+		}	
 
+	}
 	return 0;
 }
