@@ -9,58 +9,90 @@
 
 using namespace std;
 
+pid_t pid_1, pid_2;
+int fields[2];
+ofstream fout_one("output_1.txt");
+ofstream fout_two("output_2.txt");
+
+void Signal_handler(int signal_num){
+	
+	switch(signal_num){
+	
+		case SIGUSR1: {
+			if (pid_1 == 0){
+				char output;
+				if (read (fields[0],&output,1) == -1){
+					cout << strerror(errno) << "\n";
+				}
+						
+				if ((int)output != -1){	
+				   fout_one << output;
+				   cout << "Symbol: " << (int)output << endl;
+				}
+				
+			}
+			break;
+		}
+		
+		case SIGUSR2: {
+			if (pid_2 == 0){
+				char output;
+				if (read (fields[0],&output,1) == -1){
+					cout << strerror(errno) << "\n";
+				}
+					
+				if ((int)output != -1){	
+				   fout_two << output;
+				   cout << "Symbol: " << (int)output << endl;
+				}
+
+			}
+			break;
+		}	
+			
+	}
+}
+
 int main(){
 
-	int fields[2];
 	
 	if (pipe(fields) < 0){
 		exit(1);
 	} else {
 		cout << "Pipe is open\n\n";
 	}
-
-	char buf[128];
 	
 	ifstream fin; 
 	fin.open("input.txt");
 	
-	pid_t pid_1, pid_2;
+	pid_1 = vfork();
+	pid_2 = vfork();
+	
+	signal (SIGUSR1, Signal_handler);
+	signal (SIGUSR2, Signal_handler);
+
+	char buf;
+	int count = 0;
+	
 	while (!fin.eof()){
 	
-		fin.getline(buf,128);
-		strcat(buf, "\n");
-		write (fields[1],buf,strlen(buf) + 1);	
+		buf = fin.get();
+		write (fields[1],&buf,1);	
 		
-		pid_1 = vfork();
-		if (pid_1 == 0){
-			ofstream fout("output_1.txt");
-			close (fields[1]);
-
-			char output;
-			read (fields[0],&output,1);	
-			if (output != '\0'){	
-				fout << output;
-				cout << output;
-			}
-			exit(1);
-		}
-
-		pid_2 = vfork();
-		if (pid_2 == 0){
-			ofstream fout("output_2.txt");
-			close (fields[1]);
-
-			char output;
-			read (fields[0],&output,1);	
-			if (output != '\0'){	
-				fout << output;
-				cout << output;
-			}
-			exit(1);
+		if (count % 2 == 0){
+			raise (SIGUSR1);
+		} else {
+			raise (SIGUSR2);
 		}
 		
-		
+		count++;
 	}
+	
+	fout_one.close();
+	fout_two.close();
+	
+	kill(pid_1,SIGTERM);
+	kill(pid_2,SIGTERM);
 	
 	return 0;
 }
